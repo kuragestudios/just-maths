@@ -1,0 +1,247 @@
+---
+import Base from '../layouts/Base.astro';
+import ElementDiagram from '../components/ElementDiagram.astro';
+
+const base = import.meta.env.BASE_URL;
+const itch = 'https://kuragestudios.itch.io/just-maths-training';
+const play = 'https://play.google.com/store/apps/details?id=com.studiokurage.maths';
+
+const screenshots = [
+  { src: 'carousel-solve.jpg', alt: 'Solve mathematical puzzles' },
+  { src: 'carousel-puzzle.jpg', alt: 'More than 100 puzzles to stimulate your brain' },
+  { src: 'carousel-keep.jpg', alt: 'Keep your mind in shape' },
+  { src: 'carousel-improve.jpg', alt: 'Improve your mental acuity' },
+];
+
+const steps = [
+  { title: 'Find the target', text: 'Each grid shows the number you must land on exactly. Nothing else counts as a win.' },
+  { title: 'Start at the entry', text: 'Press the highlighted start tile and drag — or just use the arrow keys. The line follows you through neighbouring tiles.' },
+  { title: 'Pick up numbers and operators', text: 'Crossing a number applies it with whatever operator you crossed last. The running total is always on screen.' },
+  { title: 'One unbroken line', text: 'No diagonals, no crossing your own path, no visiting a tile twice — except bridges, which take two passes.' },
+  { title: 'Reach the exit on the target', text: 'Land on the exit with the total equal to the target and the level is cleared. Otherwise back up and re-route.' },
+];
+
+const controls = [
+  { action: 'Draw the line', touch: 'drag from tile to tile', mouse: 'click and drag', keys: '← ↑ → ↓ or W A S D' },
+  { action: 'Undo one step', touch: 'drag back one tile', mouse: 'drag back one tile', keys: 'Backspace' },
+  { action: 'Clear the path', touch: 'drag back to the entry', mouse: 'drag back to the entry', keys: 'R' },
+  { action: 'Pause menu', touch: 'pause button', mouse: 'pause button', keys: 'Esc' },
+];
+
+const elements = [
+  { kind: 'num', glyph: '7', title: 'Number', text: 'Applied to your running total with the last operator you crossed.' },
+  { kind: 'op', glyph: '+', title: 'Add / Subtract', text: 'The first two packs. Sets how the next number counts.' },
+  { kind: 'op', glyph: '×', title: 'Multiply / Divide', text: 'Divisions come out whole — if yours does not, it is the wrong route.' },
+  { kind: 'op', glyph: 'xⁿ', title: 'Power', text: 'Raises the total. Small numbers get big fast.' },
+  { kind: 'op', glyph: 'n!', title: 'Factorial', text: 'Applies to the total on the spot. No number needed after it.' },
+  { kind: 'goal', glyph: '= 42', title: 'Target', text: 'The number to finish on, shown above the grid. Over or under is a miss.' },
+  { kind: 'entry', title: 'Entry & Exit', text: 'The line must start on the ▶ tile and finish on the ⚑ tile.' },
+  { kind: 'wall', title: 'Wall', text: 'Impassable. The line has to go around, which is usually the whole puzzle.' },
+  { kind: 'bridge', title: 'Bridge', text: 'The one tile you may cross twice — once each way, never doubling back along the same direction.' },
+  { kind: 'tp', title: 'Teleporter', text: 'Enter one and the line continues out of its twin, anywhere on the grid.' },
+];
+
+const features = [
+  { icon: '✏️', title: 'One Line, One Answer', text: 'Draw a single line from the entry to the exit. Every number you cross counts; every operator changes how the next ones count.' },
+  { icon: '🧩', title: '128 Hand-Made Puzzles', text: 'Eight packs from tutorial to insane. Walls block you, bridges can be crossed twice, teleporters send you across the grid.' },
+  { icon: '📅', title: 'A New Daily Every Day', text: 'Sixteen generated levels, easy to hard, identical for everyone. Progress resets at midnight; come back tomorrow.' },
+  { icon: '🎨', title: '16 Themes', text: 'From neon to pastel. Pick the palette that keeps you focused.' },
+  { icon: '📱', title: 'Portrait Or Landscape', text: 'Phone in one hand or a wide desktop window, the layout adapts.' },
+  { icon: '🔕', title: 'No Ads, No Accounts', text: 'Nothing to sign up for, nothing tracking you. Just maths.' },
+];
+---
+
+<Base title="Just Maths Training — free math puzzle game in your browser">
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <img class="hero-logo" src={`${base}images/logo.png`} alt="Just Maths Training" width="512" />
+        <p class="tagline">Train your brain in minutes a day. Draw one line through numbers and operators to hit the target exactly.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={`${base}play/`}>▶ Play free in your browser</a>
+          <a class="btn btn-pink" href={itch} target="_blank" rel="noopener">♥ Get it for Mac / Windows</a>
+        </div>
+        <p class="muted small">Works on desktop and phone. No install, no account.</p>
+      </div>
+      <div class="hero-shot">
+        <img src={`${base}images/carousel-title.jpg`} alt="Just Maths Training title screen" width="480" loading="eager" />
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section">
+    <div class="container">
+      <h2><span class="accent">▮</span>How It Plays</h2>
+      <div class="grid grid-3">
+        {features.map((f) => (
+          <div class="card">
+            <div class="icon" aria-hidden="true">{f.icon}</div>
+            <h3>{f.title}</h3>
+            <p>{f.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="how-to-play" class="section">
+    <div class="container">
+      <h2><span class="accent">▮</span>How To Play</h2>
+      <div class="howto">
+        <ol class="steps">
+          {steps.map((s) => (
+            <li><strong>{s.title}</strong><span class="muted">{s.text}</span></li>
+          ))}
+        </ol>
+        <div class="table-wrap">
+          <table class="controls">
+            <thead><tr><th></th><th>Touch</th><th>Mouse</th><th>Keyboard</th></tr></thead>
+            <tbody>
+              {controls.map((c) => (
+                <tr><th>{c.action}</th><td>{c.touch}</td><td>{c.mouse}</td><td><kbd>{c.keys}</kbd></td></tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="muted small">The line is the order of operations: <code>2 + 3 × 4</code> read along the path is <code>20</code>, not <code>14</code>. Backing up costs nothing, so try a route and see where it lands.</p>
+          <p class="muted small">On a keyboard the arrows or <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk the line one tile at a time, or hold one down to run along a row — pressing back towards the tile you came from rubs that step out, so you can re-route without lifting a finger. On a teleporter any direction takes the jump. <kbd>Backspace</kbd> undoes one step, <kbd>R</kbd> clears the whole path, and <kbd>Esc</kbd> opens the pause menu and closes it again.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="elements" class="section">
+    <div class="container">
+      <h2><span class="accent">▮</span>Gameplay Elements</h2>
+      <p class="muted">The eight packs introduce these one at a time, so nothing lands on you all at once. In the diagrams, the <span class="key-line">cyan line</span> is the path you draw.</p>
+      <ul class="elements">
+        {elements.map((e) => (
+          <li>
+            <ElementDiagram kind={e.kind} glyph={e.glyph} />
+            <span class="el-copy"><strong>{e.title}</strong><span class="muted">{e.text}</span></span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section id="daily" class="section daily">
+    <div class="container daily-inner">
+      <div>
+        <h2><span class="accent">▮</span>The Daily Grid</h2>
+        <p>Every day at midnight the game deals a brand-new set of sixteen levels. The first ones are a warm-up; the last ones will make you think. Everyone in the world gets the same grid, so compare notes with a friend.</p>
+        <p class="muted">Your Daily progress lives for the day, then the slate is wiped clean. Your progress in the regular packs is never touched.</p>
+        <a class="btn" href={`${base}play/`}>Try today's grid</a>
+      </div>
+      <ol class="daily-steps">
+        <li><strong>Easy</strong> — 5×5, one operator, warm up.</li>
+        <li><strong>Normal</strong> — 6×6, division joins, first walls.</li>
+        <li><strong>Hard</strong> — 7×7, factorials, decoy operators.</li>
+        <li><strong>Expert</strong> — 8×8, powers, long winding paths.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2><span class="accent">▮</span>Screenshots</h2>
+      <div class="shots">
+        {screenshots.map((s) => <img src={`${base}images/${s.src}`} alt={s.alt} loading="lazy" width="320" />)}
+      </div>
+    </div>
+  </section>
+
+  <section id="trailer" class="section">
+    <div class="container trailer-inner">
+      <div>
+        <h2><span class="accent">▮</span>See It In Motion</h2>
+        <p>One minute of paths being drawn, totals climbing and targets being hit. Then go and do it yourself.</p>
+        <a class="btn btn-primary" href={`${base}play/`}>▶ Play free in your browser</a>
+      </div>
+      <div class="video">
+        <iframe src="https://www.youtube-nocookie.com/embed/z15OvVxvb6k?rel=0" title="Just Maths Training trailer" allow="autoplay; encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="section">
+    <div class="container">
+      <h2><span class="accent">▮</span>Play Free, Or Say Thanks</h2>
+      <div class="grid grid-3 download">
+        <div class="card">
+          <h3>Browser</h3>
+          <p class="price">Free</p>
+          <p>The complete game, right here. Nothing to install.</p>
+          <a class="btn btn-primary" href={`${base}play/`}>Play now</a>
+        </div>
+        <div class="card highlight">
+          <h3>Mac &amp; Windows</h3>
+          <p class="price">Small paid download</p>
+          <p>Offline, full screen, any window size. It is the "thank you" that keeps the lights on.</p>
+          <a class="btn btn-pink" href={itch} target="_blank" rel="noopener">Buy on itch.io</a>
+        </div>
+        <div class="card">
+          <h3>Android</h3>
+          <p class="price">Coming back</p>
+          <p>The Google Play version is being refreshed with the Daily grid.</p>
+          <a class="btn" href={play} target="_blank" rel="noopener">Google Play</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding: clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem); background: radial-gradient(ellipse at 20% 0%, rgba(33, 230, 245, 0.12), transparent 55%), radial-gradient(ellipse at 90% 100%, rgba(255, 79, 216, 0.12), transparent 55%); }
+  .hero-inner { display: grid; gap: 2.5rem; align-items: center; }
+  @media (min-width: 860px) { .hero-inner { grid-template-columns: 1.2fr 0.8fr; } }
+  .hero-logo { width: min(100%, 520px); height: auto; filter: drop-shadow(0 0 24px rgba(33, 230, 245, 0.35)); }
+  .tagline { font-size: clamp(1.1rem, 2vw, 1.35rem); color: var(--text); max-width: 34em; margin-top: 1.2rem; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1.4rem 0 0.8rem; }
+  .small { font-size: 0.9rem; }
+  .hero-shot img { width: min(100%, 420px); margin: 0 auto; border-radius: 22px; border: 1px solid var(--line); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55); }
+
+  .icon { font-size: 1.6rem; margin-bottom: 0.5rem; }
+
+  .daily-inner { display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 860px) { .daily-inner { grid-template-columns: 1.1fr 0.9fr; } }
+  .daily-steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 0.7rem; }
+  .daily-steps li { counter-increment: step; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1rem 0.9rem 3.2rem; position: relative; color: var(--muted); }
+  .daily-steps li strong { color: var(--text); }
+  .daily-steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 1rem; top: 0.85rem; font-family: var(--mono); color: var(--pink); }
+
+  .howto { display: grid; gap: 2rem; align-items: start; }
+  @media (min-width: 900px) { .howto { grid-template-columns: 1fr 1fr; } }
+  .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 0.7rem; }
+  .steps li { counter-increment: step; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1rem 0.9rem 3.2rem; position: relative; display: flex; flex-direction: column; font-size: 0.95rem; }
+  .steps li strong { color: var(--text); }
+  .steps li::before { content: counter(step, decimal-leading-zero); position: absolute; left: 1rem; top: 0.9rem; font-family: var(--mono); color: var(--cyan); }
+  .table-wrap { width: 100%; }
+  .controls { width: 100%; border-collapse: collapse; font-size: 0.95rem; table-layout: fixed; }
+  .controls th, .controls td { text-align: left; padding: 0.7rem 0.6rem; overflow-wrap: anywhere; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .controls thead th { color: var(--muted); font-weight: 600; font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .controls tbody th { color: var(--text); font-weight: 600; }
+  .controls td { color: var(--muted); }
+  kbd, code { font-family: var(--mono); font-size: 0.9em; padding: 0.15em 0.5em; border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--cyan); }
+
+  .key-line { color: var(--cyan); }
+  .elements { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
+  @media (min-width: 680px) { .elements { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 1000px) { .elements { grid-template-columns: 1fr 1fr 1fr; } }
+  .elements li { display: flex; align-items: center; gap: 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 0.8rem 1rem; font-size: 0.9rem; }
+  .el-copy { display: flex; flex-direction: column; gap: 0.15rem; }
+  .el-copy strong { color: var(--text); }
+
+  .trailer-inner { display: grid; gap: 2rem; align-items: center; }
+  @media (min-width: 860px) { .trailer-inner { grid-template-columns: 0.9fr 1.1fr; } }
+  .video { position: relative; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+  .shots img { width: 100%; border-radius: 16px; border: 1px solid var(--line); }
+
+  .download .card { display: flex; flex-direction: column; gap: 0.6rem; }
+  .download .card .btn { margin-top: auto; align-self: flex-start; }
+  .download .price { color: var(--cyan); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.8rem; }
+  .download .highlight { border-color: rgba(255, 79, 216, 0.5); box-shadow: 0 0 40px rgba(255, 79, 216, 0.12); }
+  .download .highlight .price { color: var(--pink); }
+</style>

@@ -1,0 +1,84 @@
+---
+/** Small 3x3 grid diagram showing how one gameplay element behaves. */
+interface Props {
+  kind: string;
+  glyph?: string;
+}
+const { kind, glyph } = Astro.props;
+
+const S = 22;          // tile size
+const G = 5;           // gap
+const P = S + G;       // pitch
+const SIZE = 3 * S + 2 * G;
+const mid = (n: number) => n * P + S / 2;
+const pts = (path: number[][]) => path.map(([c, r]) => `${mid(c)},${mid(r)}`).join(' ');
+
+type Mark = { cls: string; text?: string };
+type Def = { path?: number[][]; path2?: number[][]; jump?: number[][]; marks?: Record<string, Mark> };
+
+const defs: Record<string, Def> = {
+  entry: {
+    path: [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2]],
+    marks: { '0,0': { cls: 'start', text: '▶' }, '2,2': { cls: 'end', text: '⚑' } },
+  },
+  wall: {
+    path: [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 1]],
+    marks: { '1,0': { cls: 'wall' }, '1,1': { cls: 'wall' } },
+  },
+  bridge: {
+    path: [[0, 1], [1, 1], [2, 1]],
+    path2: [[1, 0], [1, 1], [1, 2]],
+    marks: { '1,1': { cls: 'bridge', text: '≡' } },
+  },
+  tp: {
+    path: [[0, 2], [0, 1], [0, 0]],
+    jump: [[0, 0], [2, 0]],
+    path2: [[2, 0], [2, 1], [2, 2]],
+    marks: { '0,0': { cls: 'tp', text: '⇄' }, '2,0': { cls: 'tp', text: '⇄' } },
+  },
+};
+
+const def = defs[kind];
+const cells = [0, 1, 2].flatMap((r) => [0, 1, 2].map((c) => [c, r] as const));
+---
+
+{def ? (
+  <svg class="diag" viewBox={`-3 -3 ${SIZE + 6} ${SIZE + 6}`} width="82" height="82" role="img" aria-hidden="true">
+    {cells.map(([c, r]) => {
+      const m = def.marks?.[`${c},${r}`];
+      return (
+        <g>
+          <rect class={`cell ${m ? m.cls : ''}`} x={c * P} y={r * P} width={S} height={S} rx="5" />
+          {m?.text && <text class={`glyph ${m.cls}`} x={mid(c)} y={mid(r)}>{m.text}</text>}
+        </g>
+      );
+    })}
+    {def.path && <polyline class="path" points={pts(def.path)} />}
+    {def.path2 && <polyline class="path" points={pts(def.path2)} />}
+    {def.jump && <polyline class="path jump" points={pts(def.jump)} />}
+  </svg>
+) : (
+  <span class={`diag tile ${kind}`} aria-hidden="true">{glyph}</span>
+)}
+
+<style>
+  .diag { flex: 0 0 auto; width: 82px; height: 82px; }
+  .cell { fill: #0f1222; stroke: rgba(255, 255, 255, 0.09); }
+  .cell.wall { fill: #1c2038; stroke: rgba(255, 255, 255, 0.16); }
+  .cell.start, .cell.end { stroke: rgba(255, 79, 216, 0.55); }
+  .cell.bridge { fill: rgba(33, 230, 245, 0.1); stroke: rgba(33, 230, 245, 0.5); }
+  .cell.tp { fill: rgba(255, 79, 216, 0.12); stroke: rgba(255, 79, 216, 0.5); }
+
+  text.glyph { font-family: var(--mono); font-size: 11px; font-weight: 700; text-anchor: middle; dominant-baseline: central; fill: var(--text); }
+  text.glyph.start, text.glyph.end, text.glyph.tp { fill: var(--pink); }
+  text.glyph.bridge { fill: var(--cyan); }
+
+  .path { fill: none; stroke: var(--cyan); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+  .path.jump { stroke: var(--pink); stroke-width: 3; stroke-dasharray: 2 5; opacity: 0.8; }
+
+  /* single-glyph tiles (operators, numbers) share the diagram footprint */
+  .tile { width: 82px; height: 82px; display: grid; place-items: center; border-radius: 12px; font-family: var(--mono); font-size: 1.5rem; font-weight: 700; border: 1px solid var(--line); background: #0f1222; }
+  .tile.num { color: var(--text); border-color: rgba(255, 255, 255, 0.18); }
+  .tile.op { color: var(--cyan); border-color: rgba(33, 230, 245, 0.5); }
+  .tile.goal { color: var(--pink); border-color: rgba(255, 79, 216, 0.5); }
+</style>
