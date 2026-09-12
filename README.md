@@ -1,6 +1,6 @@
 # Just Maths — website & web build
 
-Astro site published on GitHub Pages at https://kuragestudios.github.io/just-maths-training/
+Astro site published on GitHub Pages at https://kuragestudios.github.io/just-maths/
 
 - `/` landing page (features, screenshots, download links)
 - `/play/` the game, full window
@@ -8,7 +8,7 @@ Astro site published on GitHub Pages at https://kuragestudios.github.io/just-mat
 
 ```sh
 npm install
-npm run dev      # http://localhost:4321/just-maths-training/
+npm run dev      # http://localhost:4321/just-maths/
 npm run build    # dist/
 ```
 
