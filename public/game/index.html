@@ -74,6 +74,10 @@
       productName: "Just Maths",
       productVersion: "1.3",
       showBanner: unityShowBanner,
+      // the save file lives in Application.persistentDataPath, which on WebGL is an in-memory
+      // filesystem: without this the writes are never flushed to IndexedDB and progress is lost
+      // on reload (Unity leaves it off by default for backwards compatibility)
+      autoSyncPersistentDataPath: true,
     };
 
     // embedded in the website's /play/ page or on itch.io: the host page provides the chrome

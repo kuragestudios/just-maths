@@ -1,4 +1,4 @@
-# Just Maths Training — website & web build
+# Just Maths — website & web build
 
 Astro site published on GitHub Pages at https://kuragestudios.github.io/just-maths-training/
 
